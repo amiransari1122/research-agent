@@ -38,13 +38,16 @@ def tavily_search(query: str, max_results: int = 5) -> list:
     return resp.json().get("results", [])
 
 
-def search_many(queries: list, max_results_per_query: int = 5) -> str:
+def search_many(queries: list, max_results_per_query: int = 5, max_total_chars: int = 12000) -> str:
     """
     Run several search queries, dedupe by URL, and return the combined
     results formatted as plain text context for the LLM to work from.
+    Stops adding results once max_total_chars is reached, to stay under
+    Groq's free-tier payload/token limits.
     """
     seen_urls = set()
     blocks = []
+    total_chars = 0
     for q in queries:
         try:
             results = tavily_search(q, max_results=max_results_per_query)
@@ -56,11 +59,15 @@ def search_many(queries: list, max_results_per_query: int = 5) -> str:
             if url in seen_urls:
                 continue
             seen_urls.add(url)
-            blocks.append(
+            block = (
                 f"TITLE: {r.get('title', '')}\n"
                 f"URL: {url}\n"
-                f"CONTENT: {r.get('content', '')[:1500]}\n"
+                f"CONTENT: {r.get('content', '')[:600]}\n"
             )
+            if total_chars + len(block) > max_total_chars:
+                continue
+            blocks.append(block)
+            total_chars += len(block)
     return "\n---\n".join(blocks)
 
 
