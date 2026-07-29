@@ -1,69 +1,85 @@
-# NLP/LLM Research Tracking Agent
+# NLP/LLM Research Tracking Agent — Free Stack
 
-Two scripts, run automatically for free via GitHub Actions:
-- `paper_digest.py` — every 2 weeks, 10 papers on your chosen topic
+Two scripts, run automatically for free via GitHub Actions, using a
+**fully free** API stack:
+- **Tavily** (free tier: 1,000 searches/month, no credit card) — web search
+- **Groq** (free tier, no credit card) — writes the report using Llama 3.3 70B
+
+- `paper_digest.py` — every 2 weeks, searches your topic, writes a digest
 - `trend_report.py` — every month, a broader trend/landscape report
 
-No server needed. Reports are saved to `output/` (committed to the repo)
-and optionally emailed to you.
+Reports save to `output/` (committed to the repo) and optionally get emailed.
 
-## Setup (10-15 minutes, one time)
+## Setup (15-20 minutes, one time)
 
-### 1. Get an API key
-Go to https://platform.claude.com, create an account, add credit, and
-generate an API key under API Keys.
+### 1. Get a free Tavily API key
+- Go to https://tavily.com → sign up (no credit card)
+- Your API key is on the dashboard, starts with `tvly-`
 
-### 2. Create a GitHub repo
-- Create a new **private** repo (your reports will be committed to it).
+### 2. Get a free Groq API key
+- Go to https://console.groq.com → sign up (no credit card)
+- Create an API key, starts with `gsk_`
+
+### 3. Create a GitHub repo
+- Create a new **private** repo.
 - Upload all files in this folder, keeping the `.github/workflows/` structure.
 
-### 3. Add secrets
-In the repo: Settings → Secrets and variables → Actions → New repository secret.
+### 4. Add secrets
+Repo → Settings → Secrets and variables → Actions → New repository secret.
 
 Required:
-- `ANTHROPIC_API_KEY` — your API key from step 1
+- `TAVILY_API_KEY`
+- `GROQ_API_KEY`
 
-Optional (only if you want reports emailed, not just committed to the repo):
-- `SMTP_SERVER` (e.g. `smtp.gmail.com`)
-- `SMTP_PORT` (e.g. `587`)
-- `SMTP_USER` (your email address)
-- `SMTP_PASS` (an **app password**, not your normal password — for Gmail,
-  generate one at https://myaccount.google.com/apppasswords)
-- `TO_EMAIL` (where to send the reports — can be the same as SMTP_USER)
+Optional (only if you want reports emailed, not just saved to the repo):
+- `SMTP_SERVER`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `TO_EMAIL`
+  (see earlier setup notes — Gmail needs an app password, not your normal one)
 
-If you skip the SMTP secrets, the agent still works — reports just show up
-as new files in `output/` in your repo instead of your inbox.
+### 5. Enable Actions
+Actions tab → enable workflows if prompted.
 
-### 4. Enable Actions
-Go to the "Actions" tab in your repo and enable workflows if prompted.
-That's it — the schedules in `.github/workflows/*.yml` take over from here.
-
-### 5. Test it immediately (don't wait 2 weeks)
-Actions tab → select "Biweekly Paper Digest" or "Monthly Trend Report" →
-"Run workflow" button → for the digest, set `force_run: true` so it doesn't
-skip due to the week-parity check.
+### 6. Test it immediately
+Actions tab → pick a workflow → "Run workflow" → for the digest, set
+`force_run: true` so it doesn't skip due to the week-parity check.
 
 ## Customizing
 
-- **Change your topic**: edit the `TOPIC` variable at the top of
-  `paper_digest.py`, commit the change. Do this every cycle as your thesis
-  focus narrows.
-- **Change the schedule**: edit the `cron:` line in the workflow files.
-  Cron format: `minute hour day month weekday`. https://crontab.guru helps.
-- **Change the prompt**: edit `USER_PROMPT` / `SYSTEM_PROMPT` in either
-  script to adjust sources, depth, or format.
+- **Topic**: edit `TOPIC` at the top of `paper_digest.py`.
+- **Schedule**: edit the `cron:` line in the workflow files.
+- **Search queries**: edit `SEARCH_QUERIES` in either script — more/better
+  angled queries = better source material for the report.
+- **Prompt**: edit `SYSTEM_PROMPT` / `build_user_prompt()` in either script.
 
 ## Cost
 
-Each run does up to ~15 web searches plus one Claude Sonnet 5 call.
-Roughly a few cents to low tens of cents per report — cheap enough that
-cost isn't a real constraint here. Check current pricing at
-https://platform.claude.com (Docs → Pricing) before relying on this number.
+$0. Both free tiers comfortably cover this volume:
+- Tavily: ~9-20 searches per run x 3 runs/month = well under the 1,000/month cap
+- Groq: 3 calls/month is nowhere near free-tier rate limits (30 req/min, ~1,000 req/day)
+
+## Honest trade-off vs. the Claude API version
+
+This free stack trades some quality for $0 cost:
+- **Search quality**: Tavily is a solid general web search API, but it isn't
+  purpose-built for academic paper search the way Claude's tool-use +
+  reasoning about arXiv/Scholar is. You may get more blog posts/news
+  alongside papers — the prompts try to filter for real papers/results but
+  can't invent sources that aren't in the search results.
+- **Synthesis quality**: Llama 3.3 70B (via Groq) is a strong open model,
+  but the "which paper has the most interesting thesis gap" kind of nuanced
+  judgment tends to be a bit shallower than what Opus/Sonnet produce.
+  Read the reports with that in mind — treat them as a strong starting
+  point for your own reading, not a substitute for actually reading the
+  papers that catch your eye.
+- Both scripts are written to only work from actual search results (not
+  invent papers) — if a run's search results are thin, the report will
+  say so rather than padding with made-up content.
+
+If quality ever feels too thin, the previous Claude-API version of these
+scripts is a straightforward drop-in swap — happy to hand that version back
+anytime.
 
 ## Notes on the "every 2 weeks" cron trick
 
-GitHub Actions cron doesn't support "every N weeks" natively, only fixed
-weekly/monthly patterns. `paper_digest.py` fires weekly but checks the ISO
-week number (even/odd) and skips half the time — so effectively it runs
-every 2 weeks. If you'd rather have it always run and just track it
-yourself, remove the `is_biweekly_run_week()` check in `paper_digest.py`.
+GitHub Actions cron doesn't support "every N weeks" natively. `paper_digest.py`
+fires weekly but checks the ISO week number (even/odd) and skips half the
+time - so effectively it runs every 2 weeks.
