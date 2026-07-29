@@ -48,7 +48,7 @@ SEARCH RESULTS:
 
 
 def main():
-    search_context = search_many(SEARCH_QUERIES, max_results_per_query=5)
+    search_context = search_many(SEARCH_QUERIES, max_results_per_query=3)
     if not search_context:
         print("No search results returned - aborting this run.")
         return
