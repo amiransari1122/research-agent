@@ -91,6 +91,8 @@ def ask_groq(system_prompt: str, user_prompt: str, max_tokens: int = 2000) -> st
         },
         timeout=120,
     )
+    if resp.status_code >= 400:
+        print(f"Groq error {resp.status_code}: {resp.text}")
     resp.raise_for_status()
     return resp.json()["choices"][0]["message"]["content"].strip()
 
