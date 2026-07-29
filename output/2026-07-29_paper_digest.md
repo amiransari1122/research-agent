@@ -1,74 +1,50 @@
-# Paper Digest - hallucination detection and mitigation in retrieval-augmented generation (RAG) systems
+# Paper Digest - hallucination detection and mitigation in retrieval-augmented generation (RAG) systems and Prompt Optimization engineering
 2026-07-29
 
-Based on the provided search results, I have selected 10 papers/articles that are most relevant to the topic of hallucination detection and mitigation in retrieval-augmented generation (RAG) systems.
+### Selected Papers and Articles
 
-**Group 1: Hallucination Detection Methods**
+1. **Mitigating Hallucination in Large Language Models (LLMs): An Application-Oriented Survey on RAG, Reasoning, and Agentic Systems**
+   - URL: https://www.semanticscholar.org/paper/Mitigating-Hallucination-in-Large-Language-Models-Li-Fu/c80519a96f2d8ef7c5fa76f42407888ea2dfda55
+   - Summary: This survey presents a new strategy to reduce hallucinations in structured output tasks using Retrieval-Augmented Generation (RAG) with a small retriever model and a Large Language Model (LLM), achieving lower computational needs without negatively impacting output quality. The approach focuses on application-oriented solutions for hallucination mitigation. It highlights the potential of RAG in improving the factual accuracy of LLM outputs.
+   - Relevance: Relevant to hallucination detection and mitigation in RAG systems.
+   - Novelty/Gap: The open question left by this work is how to further optimize the retriever model for more efficient and effective hallucination mitigation across various tasks.
 
-1. **CORTEX: Token-Level Hallucination Detection in RAG via Comparative Internal Representations**
-https://arxiv.org/html/2606.31033v1
-CORTEX detects hallucinations in RAG systems by comparing internal representations of the model. It achieves robust localized hallucination detection through a combination of contextual residual and label-persistence smoothing.
-Relevant to the topic because it proposes a novel method for hallucination detection in RAG systems.
-Novelty/gap: The paper leaves open the question of how to extend CORTEX to other types of generation tasks.
+2. **A Comprehensive Survey of Hallucination in Large Language Models: Causes, Detection, and Mitigation**
+   - URL: https://arxiv.org/html/2510.06265v1
+   - Summary: This survey categorizes hallucination mitigation techniques into prompt engineering, retrieval-augmented generation (RAG), self-refinement, and decoding strategies. It also presents a dual taxonomy of factuality and faithfulness hallucinations and defines hallucination causes in the data. The work provides a comprehensive overview of the current state of hallucination mitigation in LLMs.
+   - Relevance: Relevant due to its comprehensive coverage of hallucination mitigation techniques, including RAG and prompt engineering.
+   - Novelty/Gap: Extending this work could involve exploring the application of these mitigation techniques in real-world scenarios and evaluating their effectiveness in diverse domains.
 
-2. **Lumina: Detecting Hallucinations in RAG System with Context–Knowledge Signals**
-https://arxiv.org/html/2509.21875v3
-Lumina detects hallucinations in RAG systems by quantifying context-knowledge signals. It outperforms prior utilization-based methods and remains robust under relaxed assumptions about retrieval quality.
-Relevant to the topic because it proposes a novel framework for hallucination detection in RAG systems.
-Novelty/gap: The paper does not explore the application of Lumina to other domains or tasks.
+3. **Hallucination Detection and Mitigation in Large Language ...**
+   - URL: https://arxiv.org/pdf/2601.09929
+   - Summary: This framework implements a continuous improvement cycle for hallucination detection and mitigation, designed to account for potential root causes. The system evolves through iterative testing and refinement, aiming to improve the factual accuracy and reliability of LLM outputs.
+   - Relevance: Relevant as it proposes a systematic approach to detecting and mitigating hallucinations in LLMs.
+   - Novelty/Gap: A potential extension could involve integrating this framework with other hallucination mitigation techniques, such as RAG and prompt engineering, to create a more robust system.
 
-**Group 2: Hallucination Mitigation Strategies**
+4. **Stable-RAG: Mitigating Retrieval-Permutation-Induced Hallucinations in Retrieval-Augmented Generation**
+   - URL: https://arxiv.org/html/2601.02993v4
+   - Summary: This work focuses on mitigating retrieval-permutation-induced hallucinations in RAG by providing explicit evidence from external documents. It aims to improve the factual accuracy of LLMs on knowledge-intensive tasks.
+   - Relevance: Directly relevant to hallucination detection and mitigation in RAG systems.
+   - Novelty/Gap: An open question is how to adapt Stable-RAG for tasks where external evidence is scarce or unreliable.
 
-3. **RAG-HAT: A Hallucination-Aware Tuning Pipeline for LLM in Retrieval-Augmented Generation**
-https://aclanthology.org/2024.emnlp-industry.113.pdf
-RAG-HAT is a fine-tuning pipeline that combines hallucination detection and mitigation. It uses a detection model to identify hallucinations and revises the RAG output to remove them.
-Relevant to the topic because it proposes a novel pipeline for hallucination mitigation in RAG systems.
-Novelty/gap: The paper does not evaluate RAG-HAT on a wide range of tasks or domains.
+5. **Hallucination Mitigation for Retrieval-Augmented Large ...**
+   - URL: https://www.mdpi.com/2227-7390/13/5/856
+   - Summary: This review encourages further exploration of prompt engineering in hallucination mitigation tasks. It acknowledges that hallucinations can still occur even after optimizing RAG subtasks, suggesting a need for comprehensive approaches.
+   - Relevance: Relevant for its focus on the potential of prompt engineering in mitigating hallucinations.
+   - Novelty/Gap: Extending this work could involve developing novel prompt engineering techniques tailored to specific hallucination mitigation challenges.
 
-4. **Mitigating Hallucinations in Retrieval-Augmented Generation (RAG) Systems**
-https://medium.com/@nakateashwath/mitigating-hallucinations-in-retrieval-augmented-generation-rag-systems-a65880ec5505
-This blog post discusses the sources of hallucinations in RAG systems and proposes a layered approach to mitigate them. It emphasizes the importance of strengthening retrieval, structuring generation, and verifying outputs.
-Relevant to the topic because it provides a comprehensive overview of hallucination mitigation strategies in RAG systems.
-Novelty/gap: The post does not provide a detailed evaluation of the proposed approach.
+6. **Meta-prompting Optimized Retrieval-augmented Generation**
+   - URL: https://arxiv.org/html/2407.03955v1
+   - Summary: This approach enhances truthfulness and curbs hallucinations in LLMs by expanding the initial prompt with additional content retrieved from external sources. It aims to improve the accuracy and reliability of LLM outputs.
+   - Relevance: Relevant as it proposes a method to optimize retrieval-augmented generation for better hallucination mitigation.
+   - Novelty/Gap: A potential gap is in exploring how to efficiently select and integrate external content to maximize hallucination mitigation without overloading the model.
 
-**Group 3: Retrieval-Augmented Generation**
+### Grouping by Sub-theme
 
-5. **Hybrid Retrieval for Hallucination Mitigation in Large Language Models**
-https://arxiv.org/html/2504.05324v1
-This paper evaluates the relationship between retriever effectiveness and hallucination reduction in LLMs. It proposes a hybrid retrieval module that combines sparse and dense retrieval signals.
-Relevant to the topic because it explores the impact of retrieval on hallucination mitigation in RAG systems.
-Novelty/gap: The paper does not explore the application of hybrid retrieval to other tasks or domains.
+- **RAG and Hallucination Mitigation**: Papers 1, 4, and 6 focus on the use of RAG to mitigate hallucinations in LLMs, highlighting the importance of explicit evidence from external documents and the optimization of the retrieval process.
+- **Comprehensive Surveys and Frameworks**: Papers 2 and 3 provide overarching views of hallucination mitigation, including categorizations of techniques and frameworks for continuous improvement.
+- **Prompt Engineering**: Papers 5 and 6 touch on the role of prompt engineering in hallucination mitigation, suggesting its potential as a complementary or standalone approach.
 
-6. **Retrieval-Augmented Generation and Hallucination Span Detection**
-https://aclanthology.org/2025.semeval-1.151.pdf
-This paper discusses the task of hallucination span detection in RAG systems. It proposes a system that leverages a RAG approach and prompting a FLAN-T5 model to identify hallucination spans.
-Relevant to the topic because it explores the task of hallucination span detection in RAG systems.
-Novelty/gap: The paper does not evaluate the system on a wide range of tasks or domains.
+### Thesis Angle
 
-**Group 4: Applications and Evaluations**
-
-7. **Hallucination Mitigation for Retrieval-Augmented Large Language Models**
-https://www.mdpi.com/2227-7390/13/5/856
-This paper reviews recent research on hallucinations in retrieval-augmented LLMs. It discusses the causes of hallucinations and corresponding mitigation methods.
-Relevant to the topic because it provides a comprehensive overview of hallucination mitigation strategies in RAG systems.
-Novelty/gap: The paper does not provide a detailed evaluation of the proposed approaches.
-
-8. **GitHub - Kanisha-Shah/Hallucination-Mitigation-Using-RAG: A Columbia University capstone project focused on mitigating hallucinations in Medical Question Answering systems using Retrieval-Augmented Generation (RAG), ElasticSearch, and LLM-based validation.**
-https://github.com/Kanisha-Shah/Hallucination-Mitigation-Using-RAG
-This repository presents a system that uses RAG and LLM-based validation to mitigate hallucinations in medical question answering systems.
-Relevant to the topic because it explores the application of RAG to a specific domain (medical question answering).
-Novelty/gap: The repository does not provide a detailed evaluation of the system.
-
-9. **ReDeEP: Detecting Hallucination in Retrieval-Augmented Generation via Mechanistic Interpretability**
-https://arxiv.org/html/2410.11414v2
-ReDeEP detects hallucinations in RAG systems by decoupling the model's utilization of external context and parametric knowledge. It also proposes AARF, which mitigates hallucinations by modulating the contributions of Knowledge FFNs and Copying Heads.
-Relevant to the topic because it proposes a novel method for hallucination detection and mitigation in RAG systems.
-Novelty/gap: The paper does not explore the application of ReDeEP to other tasks or domains.
-
-10. **MEGA-RAG: a retrieval-augmented generation framework with ...**
-https://pmc.ncbi.nlm.nih.gov/articles/PMC12540348
-MEGA-RAG is a framework that mitigates hallucinations in LLMs using a combination of retrieval-augmented generation and knowledge distillation.
-Relevant to the topic because it proposes a novel framework for hallucination mitigation in RAG systems.
-Novelty/gap: The paper does not provide a detailed evaluation of the proposed framework.
-
-If I were picking a thesis angle from this batch, I would focus on exploring the application of hallucination detection and mitigation strategies to specific domains or tasks, such as medical question answering or financial analysis. This could involve evaluating the effectiveness of existing methods in these domains and proposing novel approaches to address the unique challenges of each domain. For example, one could explore the use of domain-specific knowledge graphs or retrieval mechanisms to improve the accuracy of RAG systems in these domains. This angle would allow for a deep dive into the challenges and opportunities of applying RAG systems to real-world applications, and could lead to the development of more effective and reliable hallucination mitigation strategies.
+If I were picking a thesis angle from this batch, I would focus on exploring the integration of prompt engineering techniques with RAG systems for enhanced hallucination mitigation. This angle combines the potential of optimizing prompts to guide LLMs towards more factual outputs with the strengths of RAG in providing explicit evidence. A promising unexplored gap is in developing adaptive prompt engineering methods that can learn to select and incorporate the most relevant external content for diverse tasks, thereby maximizing the effectiveness of hallucination mitigation in RAG systems.
