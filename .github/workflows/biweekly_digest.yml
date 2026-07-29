@@ -1,0 +1,45 @@
+name: Biweekly Paper Digest
+
+on:
+  schedule:
+    # Every Monday 08:00 UTC. Script itself skips odd/even weeks so this
+    # effectively fires every 2 weeks. Adjust the day/time as you like.
+    - cron: "0 8 * * MON"
+  workflow_dispatch:
+    inputs:
+      force_run:
+        description: "Force run even on an off week"
+        required: false
+        default: "true"
+
+jobs:
+  digest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run paper digest
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          SMTP_SERVER: ${{ secrets.SMTP_SERVER }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+          TO_EMAIL: ${{ secrets.TO_EMAIL }}
+          FORCE_RUN: ${{ github.event.inputs.force_run }}
+        run: python paper_digest.py
+
+      - name: Commit report to repo
+        run: |
+          git config user.name "research-agent-bot"
+          git config user.email "actions@github.com"
+          git add output/ || true
+          git diff --staged --quiet || git commit -m "Add paper digest $(date +'%Y-%m-%d')"
+          git push || true
