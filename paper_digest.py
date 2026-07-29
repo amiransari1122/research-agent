@@ -8,7 +8,7 @@ import datetime
 from common import search_many, ask_groq, save_report, maybe_send_email, is_biweekly_run_week
 
 # --- EDIT THIS: your current research focus -------------------------------
-TOPIC = "hallucination detection and mitigation in retrieval-augmented generation (RAG) systems"
+TOPIC = "hallucination detection and mitigation in retrieval-augmented generation (RAG) systems and Prompt Optimization engineering"
 # ----------------------------------------------------------------------------
 
 # Multiple angled queries tend to surface more/better results than one query.
