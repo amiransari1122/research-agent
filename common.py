@@ -11,6 +11,7 @@ Two API keys needed, both free to obtain:
 """
 import os
 import smtplib
+import time
 from datetime import datetime
 from email.mime.text import MIMEText
 
@@ -42,9 +43,7 @@ def search_many(queries: list, max_results_per_query: int = 5, max_total_chars: 
     """
     Run several search queries, dedupe by URL, and return the combined
     results formatted as plain text context for the LLM to work from.
-    Stops adding results once max_total_chars is reached, to stay well
-    under Groq's free-tier tokens-per-minute limit (which counts prompt +
-    completion tokens together, and is tighter than it first appears).
+    Stops adding results once max_total_chars is reached.
     """
     seen_urls = set()
     blocks = []
@@ -72,29 +71,52 @@ def search_many(queries: list, max_results_per_query: int = 5, max_total_chars: 
     return "\n---\n".join(blocks)
 
 
-def ask_groq(system_prompt: str, user_prompt: str, max_tokens: int = 2000) -> str:
-    """Call Groq's Llama 3.3 70B to write the report from given context."""
-    resp = requests.post(
-        GROQ_URL,
-        headers={
-            "Authorization": f"Bearer {os.environ['GROQ_API_KEY']}",
-            "Content-Type": "application/json",
-        },
-        json={
-            "model": GROQ_MODEL,
-            "max_tokens": max_tokens,
-            "temperature": 0.3,
-            "messages": [
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_prompt},
-            ],
-        },
-        timeout=120,
-    )
-    if resp.status_code >= 400:
-        print(f"Groq error {resp.status_code}: {resp.text}")
-    resp.raise_for_status()
-    return resp.json()["choices"][0]["message"]["content"].strip()
+def ask_groq(system_prompt: str, user_prompt: str, max_tokens: int = 2000, max_retries: int = 3) -> str:
+    """
+    Call Groq's Llama 3.3 70B to write the report from given context.
+    Groq's free tier limits tokens PER MINUTE, shared across all your
+    requests. If a request gets rejected for being "too large" but it's
+    actually just because a recent request used up this minute's quota,
+    waiting ~65 seconds and retrying resolves it automatically.
+    """
+    payload = {
+        "model": GROQ_MODEL,
+        "max_tokens": max_tokens,
+        "temperature": 0.3,
+        "messages": [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt},
+        ],
+    }
+
+    for attempt in range(1, max_retries + 1):
+        resp = requests.post(
+            GROQ_URL,
+            headers={
+                "Authorization": f"Bearer {os.environ['GROQ_API_KEY']}",
+                "Content-Type": "application/json",
+            },
+            json=payload,
+            timeout=120,
+        )
+
+        if resp.status_code in (413, 429) and attempt < max_retries:
+            print(
+                f"Attempt {attempt}: Groq returned {resp.status_code} "
+                f"(likely per-minute quota, not a real size problem). "
+                f"Response: {resp.text[:500]}"
+            )
+            print("Waiting 65 seconds for the quota to reset, then retrying...")
+            time.sleep(65)
+            continue
+
+        if resp.status_code >= 400:
+            print(f"Groq error {resp.status_code} (final attempt): {resp.text}")
+
+        resp.raise_for_status()
+        return resp.json()["choices"][0]["message"]["content"].strip()
+
+    raise RuntimeError("Groq request failed after all retries.")
 
 
 def is_biweekly_run_week() -> bool:
