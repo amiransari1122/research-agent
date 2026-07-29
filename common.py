@@ -38,12 +38,13 @@ def tavily_search(query: str, max_results: int = 5) -> list:
     return resp.json().get("results", [])
 
 
-def search_many(queries: list, max_results_per_query: int = 5, max_total_chars: int = 12000) -> str:
+def search_many(queries: list, max_results_per_query: int = 5, max_total_chars: int = 4500) -> str:
     """
     Run several search queries, dedupe by URL, and return the combined
     results formatted as plain text context for the LLM to work from.
-    Stops adding results once max_total_chars is reached, to stay under
-    Groq's free-tier payload/token limits.
+    Stops adding results once max_total_chars is reached, to stay well
+    under Groq's free-tier tokens-per-minute limit (which counts prompt +
+    completion tokens together, and is tighter than it first appears).
     """
     seen_urls = set()
     blocks = []
@@ -62,7 +63,7 @@ def search_many(queries: list, max_results_per_query: int = 5, max_total_chars: 
             block = (
                 f"TITLE: {r.get('title', '')}\n"
                 f"URL: {url}\n"
-                f"CONTENT: {r.get('content', '')[:600]}\n"
+                f"CONTENT: {r.get('content', '')[:350]}\n"
             )
             if total_chars + len(block) > max_total_chars:
                 continue
@@ -71,7 +72,7 @@ def search_many(queries: list, max_results_per_query: int = 5, max_total_chars: 
     return "\n---\n".join(blocks)
 
 
-def ask_groq(system_prompt: str, user_prompt: str, max_tokens: int = 4000) -> str:
+def ask_groq(system_prompt: str, user_prompt: str, max_tokens: int = 2000) -> str:
     """Call Groq's Llama 3.3 70B to write the report from given context."""
     resp = requests.post(
         GROQ_URL,
